@@ -28,7 +28,8 @@ public class DispenseDrugService {
                 for (Allergy allergy : patientAllergies) {
                     // If patient has allergy to the ingredient throw an exception
                     if (allergy.getIngredientId().equals(ingredient.getId())) {
-                        throw new DispenseDrugException("Could not dispense drug " + drug.getName() + " cause patient " + patient.getName() + " has allergy to " + ingredient.getName());
+                        throw new DispenseDrugException("Could not dispense drug " + drug.getName() + " cause patient "
+                                + patient.getName() + " has allergy to " + ingredient.getName());
                     }
                 }
 
