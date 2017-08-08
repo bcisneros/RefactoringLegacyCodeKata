@@ -15,12 +15,14 @@ public class DispenseDrugService {
     public void dispenseDrugToPatient(Drug drug, Patient patient) throws DispenseDrugException, DrugException {
 
         // Find All ingredients of the drug
-        List<DrugIngredient> drugIngredients = DrugRepository.findDrugAllergiesFor(drug.getId());
+        Long drugId = drug.getId();
+        List<DrugIngredient> drugIngredients = findIngredientsBy(drugId);
 
         // If exists ingredients
         if (drugIngredients.size() > 0) {
             for (DrugIngredient ingredient : drugIngredients) {
-                List<Allergy> patientAllergies = AllergyRepository.findAllergiesFor(patient.getId());
+                Long patientId = patient.getId();
+                List<Allergy> patientAllergies = findAllergiesBy(patientId);
                 for (Allergy allergy : patientAllergies) {
                     // If patient has allergy to the ingredient throw an exception
                     if (allergy.getIngredientId().equals(ingredient.getId())) {
@@ -34,17 +36,23 @@ public class DispenseDrugService {
 
                 if (expirationDate.before(today)) {
                     throw new DrugException("Ingredient " + ingredient.getName() + " is expired");
-                } else {
-                    try {
-                        OrderService.createOrder(drug, patient);
-                    } catch (OrderException e) {
-                        throw new DrugException(e.getMessage());
-                    }
                 }
-
+            }
+            try {
+                OrderService.createOrder(drug, patient);
+            } catch (OrderException e) {
+                throw new DrugException(e.getMessage());
             }
         } else {
             throw new DrugException("Drug Ingredients not found for given drug: " + drug.getName());
         }
+    }
+
+    List<Allergy> findAllergiesBy(Long patientId) {
+        return AllergyRepository.findAllergiesFor(patientId);
+    }
+
+    List<DrugIngredient> findIngredientsBy(Long drugId) {
+        return DrugRepository.findDrugAllergiesFor(drugId);
     }
 }
