@@ -23,6 +23,7 @@ public class DispenseDrugService {
 
         // If exists ingredients
         if (drugIngredients.size() > 0) {
+            // Iterate ingredients
             for (DrugIngredient ingredient : drugIngredients) {
 
                 // Check if the ingredient is expired
@@ -42,6 +43,7 @@ public class DispenseDrugService {
                     }
                 }
             }
+            // Try to create new Order
             try {
                 logger.info("Trying to create new order.");
                 OrderService.createOrder(drug, patient);
