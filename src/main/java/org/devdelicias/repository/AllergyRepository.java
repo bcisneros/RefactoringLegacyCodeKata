@@ -6,6 +6,6 @@ import java.util.List;
 
 public class AllergyRepository {
     public static List<Allergy> findAllergiesFor(Long patientId) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 }
