@@ -6,23 +6,25 @@ import org.devdelicias.model.DrugIngredient;
 import org.devdelicias.model.Patient;
 import org.devdelicias.repository.AllergyRepository;
 import org.devdelicias.repository.DrugRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Date;
 import java.util.List;
 
 public class DispenseDrugService {
 
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
     public void dispenseDrugToPatient(Drug drug, Patient patient) throws DispenseDrugException, DrugException {
 
         // Find All ingredients of the drug
-        Long drugId = drug.getId();
-        List<DrugIngredient> drugIngredients = findIngredientsBy(drugId);
+        List<DrugIngredient> drugIngredients = DrugRepository.findDrugAllergiesFor(drug.getId());
 
         // If exists ingredients
         if (drugIngredients.size() > 0) {
             for (DrugIngredient ingredient : drugIngredients) {
-                Long patientId = patient.getId();
-                List<Allergy> patientAllergies = findAllergiesBy(patientId);
+                List<Allergy> patientAllergies = AllergyRepository.findAllergiesFor(patient.getId());
                 for (Allergy allergy : patientAllergies) {
                     // If patient has allergy to the ingredient throw an exception
                     if (allergy.getIngredientId().equals(ingredient.getId())) {
@@ -39,20 +41,15 @@ public class DispenseDrugService {
                 }
             }
             try {
+                logger.info("Trying to create new order.");
                 OrderService.createOrder(drug, patient);
+                logger.info("Order created.");
+
             } catch (OrderException e) {
                 throw new DrugException(e.getMessage());
             }
         } else {
             throw new DrugException("Drug Ingredients not found for given drug: " + drug.getName());
         }
-    }
-
-    List<Allergy> findAllergiesBy(Long patientId) {
-        return AllergyRepository.findAllergiesFor(patientId);
-    }
-
-    List<DrugIngredient> findIngredientsBy(Long drugId) {
-        return DrugRepository.findDrugAllergiesFor(drugId);
     }
 }
