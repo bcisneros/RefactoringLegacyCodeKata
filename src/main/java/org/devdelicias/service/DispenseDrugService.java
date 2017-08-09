@@ -4,7 +4,6 @@ import org.devdelicias.model.Allergy;
 import org.devdelicias.model.Drug;
 import org.devdelicias.model.DrugIngredient;
 import org.devdelicias.model.Patient;
-import org.devdelicias.repository.AllergyRepository;
 import org.devdelicias.repository.DrugRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,9 +30,9 @@ public class DispenseDrugService {
                 Date expirationDate = ingredient.getExpirationDate();
 
                 if (expirationDate.before(today)) {
-                    throw new DrugException("Ingredient " + ingredient.getName() + " is expired");
+                    throw new DispenseDrugException("Ingredient " + ingredient.getName() + " is expired");
                 } else {
-                    List<Allergy> patientAllergies = AllergyRepository.findAllergiesFor(patient.getId());
+                    List<Allergy> patientAllergies = patient.getAllergies();
                     for (Allergy allergy : patientAllergies) {
                         // If patient has allergy to the ingredient throw an exception
                         if (allergy.getIngredientId().equals(ingredient.getId())) {
@@ -50,10 +49,10 @@ public class DispenseDrugService {
                 logger.info("Order created.");
 
             } catch (OrderException e) {
-                throw new DrugException(e.getMessage());
+                throw new DispenseDrugException(e.getMessage());
             }
         } else {
-            throw new DrugException("Drug Ingredients not found for given drug: " + drug.getName());
+            throw new DispenseDrugException("Drug Ingredients not found for given drug: " + drug.getName());
         }
     }
 }
