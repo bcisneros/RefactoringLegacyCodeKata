@@ -1,4 +1,7 @@
 package org.devdelicias.service;
 
-public class OrderException extends Exception {
+class OrderException extends Exception {
+    OrderException(String message) {
+        super(message);
+    }
 }
