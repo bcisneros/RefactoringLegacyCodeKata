@@ -5,10 +5,15 @@ import org.devdelicias.model.Patient;
 import org.devdelicias.service.DispenseDrugException;
 import org.devdelicias.service.DispenseDrugService;
 import org.devdelicias.service.DrugException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Main {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
+
     public static void main(String[] args) throws DrugException, DispenseDrugException {
+        LOGGER.info("Running DispenseDrugService");
         new DispenseDrugService().dispenseDrugToPatient(new Drug(), new Patient());
     }
 }
