@@ -18,11 +18,11 @@ public class DispenseDrugService {
     public void dispenseDrugToPatient(Drug drug, Patient patient) throws DispenseDrugException {
 
         // Find All ingredients of the drug
-        List<DrugIngredient> drugIngredients = DrugRepository.findDrugAllergiesFor(drug.getId());
+        List<DrugIngredient> drugIngredients = DrugRepository.findIngredientsOf(drug.getId());
 
         // If exists ingredients
         if (drugIngredients.size() > 0) {
-            // Iterate ingredients
+            // Iterate ingredients for validations
             for (DrugIngredient ingredient : drugIngredients) {
 
                 // Check if the ingredient is expired
@@ -30,7 +30,7 @@ public class DispenseDrugService {
                 Date expirationDate = ingredient.getExpirationDate();
 
                 if (expirationDate.before(today)) {
-                    throw new DispenseDrugException("Ingredient " + ingredient.getName() + " is expired");
+                    throw new DispenseDrugException("Ingredient " + ingredient.getName() + " is expired.");
                 } else {
                     List<Allergy> patientAllergies = patient.getAllergies();
                     for (Allergy allergy : patientAllergies) {
@@ -42,6 +42,7 @@ public class DispenseDrugService {
                     }
                 }
             }
+
             // Try to create new Order
             try {
                 logger.info("Trying to create new order.");
@@ -51,8 +52,9 @@ public class DispenseDrugService {
             } catch (OrderException e) {
                 throw new DispenseDrugException(e.getMessage());
             }
+
         } else {
-            throw new DispenseDrugException("Drug Ingredients not found for given drug: " + drug.getName());
+            throw new DispenseDrugException("There are not ingredients for drug: " + drug.getName());
         }
     }
 }
