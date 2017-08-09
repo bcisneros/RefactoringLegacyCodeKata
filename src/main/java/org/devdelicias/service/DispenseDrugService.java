@@ -15,7 +15,7 @@ public class DispenseDrugService {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    public void dispenseDrugToPatient(Drug drug, Patient patient) throws DispenseDrugException, DrugException {
+    public void dispenseDrugToPatient(Drug drug, Patient patient) throws DispenseDrugException {
 
         // Find All ingredients of the drug
         List<DrugIngredient> drugIngredients = DrugRepository.findDrugAllergiesFor(drug.getId());
