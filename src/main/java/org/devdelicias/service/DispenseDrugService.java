@@ -32,6 +32,7 @@ public class DispenseDrugService {
                 if (expirationDate.before(today)) {
                     throw new DispenseDrugException("Ingredient " + ingredient.getName() + " is expired.");
                 } else {
+                    // US #123 Check if the patient has allergy to any ingredient of the drug
                     List<Allergy> patientAllergies = patient.getAllergies();
                     for (Allergy allergy : patientAllergies) {
                         // If patient has allergy to the ingredient throw an exception
