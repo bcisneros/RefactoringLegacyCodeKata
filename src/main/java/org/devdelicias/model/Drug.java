@@ -1,22 +1,19 @@
 package org.devdelicias.model;
 
 public class Drug {
-    private Long id;
-    private String name;
+    private final Long _id;
+    private final String _name;
 
-    public Long getId() {
-        return id;
+    public Drug(Long id, String name) {
+        _id = id;
+        _name = name;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public Long id() {
+        return _id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public String name() {
+        return _name;
     }
 }
