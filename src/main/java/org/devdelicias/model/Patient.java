@@ -6,39 +6,29 @@ import java.util.List;
 import static java.util.Arrays.asList;
 
 public class Patient {
-    private Long id;
-    private String name;
-    private List<Allergy> allergies;
+    private final Long _id;
+    private final String _name;
+    private final List<Allergy> _allergies;
 
-    public Patient() {
-        allergies = new ArrayList<>();
+    public Patient(Long id, String name) {
+        _id = id;
+        _name = name;
+        _allergies = new ArrayList<>();
     }
 
-    public Long getId() {
-        return id;
+    public Long id() {
+        return _id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public String name() {
+        return _name;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public List<Allergy> getAllergies() {
-        return allergies;
-    }
-
-    public void setAllergies(List<Allergy> allergies) {
-        this.allergies = allergies;
+    public List<Allergy> allergies() {
+        return _allergies;
     }
 
     public void add(Allergy... allergies) {
-        this.allergies.addAll(asList(allergies));
+        this._allergies.addAll(asList(allergies));
     }
 }
