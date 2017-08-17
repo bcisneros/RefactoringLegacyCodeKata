@@ -1,15 +1,13 @@
 package org.devdelicias.model;
 
-import java.sql.Timestamp;
-
 public class Allergy {
-    private Long ingredientId;
+    private final Long _ingredientId;
 
-    public Long getIngredientId() {
-        return ingredientId;
+    public Allergy(Long ingredientId) {
+        this._ingredientId = ingredientId;
     }
 
-    public void setIngredientId(Long ingredientId) {
-        this.ingredientId = ingredientId;
+    public Long ingredientId() {
+        return _ingredientId;
     }
 }

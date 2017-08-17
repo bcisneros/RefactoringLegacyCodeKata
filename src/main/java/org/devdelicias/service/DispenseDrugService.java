@@ -27,18 +27,18 @@ public class DispenseDrugService {
 
                 // Check if the ingredient is expired
                 Date today = new Date();
-                Date expirationDate = ingredient.getExpirationDate();
+                Date expirationDate = ingredient.expirationDate();
 
                 if (expirationDate.before(today)) {
-                    throw new DispenseDrugException("Ingredient " + ingredient.getName() + " is expired.");
+                    throw new DispenseDrugException("Ingredient " + ingredient.name() + " is expired.");
                 } else {
                     // US #123 Check if the patient has allergy to any ingredient of the drug
                     List<Allergy> patientAllergies = patient.allergies();
                     for (Allergy allergy : patientAllergies) {
                         // If patient has allergy to the ingredient throw an exception
-                        if (allergy.getIngredientId().equals(ingredient.getId())) {
+                        if (allergy.ingredientId().equals(ingredient.id())) {
                             throw new DispenseDrugException("Could not dispense drug " + drug.name() + " cause patient "
-                                    + patient.name() + " has allergy to " + ingredient.getName());
+                                    + patient.name() + " has allergy to " + ingredient.name());
                         }
                     }
                 }

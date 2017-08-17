@@ -3,31 +3,25 @@ package org.devdelicias.model;
 import java.util.Date;
 
 public class DrugIngredient {
-    private Long id;
-    private String name;
-    private Date expirationDate;
+    private final Long _id;
+    private final String _name;
+    private final Date _expirationDate;
 
-    public Long getId() {
-        return id;
+    public DrugIngredient(Long id, String name, Date expirationDate) {
+        this._id = id;
+        this._name = name;
+        this._expirationDate = expirationDate;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public Long id() {
+        return _id;
     }
 
-    public String getName() {
-        return name;
+    public String name() {
+        return _name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Date getExpirationDate() {
-        return expirationDate;
-    }
-
-    public void setExpirationDate(Date expirationDate) {
-        this.expirationDate = expirationDate;
+    public Date expirationDate() {
+        return _expirationDate;
     }
 }
