@@ -4,6 +4,7 @@ import org.devdelicias.model.Allergy;
 import org.devdelicias.model.Drug;
 import org.devdelicias.model.DrugIngredient;
 import org.devdelicias.model.Patient;
+import org.devdelicias.repository.DrugRepository;
 import org.joda.time.LocalDateTime;
 import org.junit.Before;
 import org.junit.Rule;
@@ -42,7 +43,9 @@ public class DispenseDrugServiceTest {
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
     private OrderService orderService = mock(OrderService.class);
-    private DispenseDrugService dispenseDrugService = Mockito.spy(new DispenseDrugService(orderService));
+    private DrugRepository drugRepository = mock(DrugRepository.class);
+
+    private DispenseDrugService dispenseDrugService = Mockito.spy(new DispenseDrugService(orderService, drugRepository));
 
     @Before
     public void setUp() throws Exception {
@@ -119,7 +122,7 @@ public class DispenseDrugServiceTest {
     }
 
     private void configureDrugIngredients(Drug givenDrug, List<DrugIngredient> ingredients) {
-        doReturn(ingredients).when(dispenseDrugService).findIngredientsOf(givenDrug);
+        doReturn(ingredients).when(drugRepository).findIngredientsBy(givenDrug.id());
     }
 
     private void expectDispenseDrugExceptionWithMessage(String message) {

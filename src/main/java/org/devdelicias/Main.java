@@ -2,6 +2,7 @@ package org.devdelicias;
 
 import org.devdelicias.model.Drug;
 import org.devdelicias.model.Patient;
+import org.devdelicias.repository.DrugRepository;
 import org.devdelicias.service.DispenseDrugException;
 import org.devdelicias.service.DispenseDrugService;
 import org.devdelicias.service.OrderService;
@@ -15,6 +16,6 @@ public class Main {
 
     public static void main(String[] args) throws DispenseDrugException {
         LOGGER.info("Running DispenseDrugService");
-        new DispenseDrugService(new OrderService()).dispenseDrugToPatient(new Drug(1L, "Xocor"), new Patient(PATIENT_ID, "Steven"));
+        new DispenseDrugService(new OrderService(), new DrugRepository()).dispenseDrugToPatient(new Drug(1L, "Xocor"), new Patient(PATIENT_ID, "Steven"));
     }
 }

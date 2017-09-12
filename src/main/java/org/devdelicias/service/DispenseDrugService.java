@@ -14,13 +14,15 @@ public class DispenseDrugService {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private OrderService orderService;
+    private DrugRepository drugRepository;
 
-    public DispenseDrugService(OrderService orderService) {
+    public DispenseDrugService(OrderService orderService, DrugRepository drugRepository) {
         this.orderService = orderService;
+        this.drugRepository = drugRepository;
     }
 
     public void dispenseDrugToPatient(Drug drug, Patient patient) throws DispenseDrugException {
-        List<DrugIngredient> drugIngredients = findIngredientsOf(drug);
+        List<DrugIngredient> drugIngredients = drugRepository.findIngredientsBy(drug.id());
 
         validateDrugHasIngredients(drug, drugIngredients);
 
@@ -62,9 +64,5 @@ public class DispenseDrugService {
 
     Date currentDateTime() {
         return new Date();
-    }
-
-    List<DrugIngredient> findIngredientsOf(Drug givenDrug) {
-        return DrugRepository.findIngredientsOf(givenDrug.id());
     }
 }

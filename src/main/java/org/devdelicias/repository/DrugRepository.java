@@ -8,4 +8,8 @@ public class DrugRepository {
     public static List<DrugIngredient> findIngredientsOf(Long drugId) {
         throw new UnsupportedOperationException();
     }
+
+    public List<DrugIngredient> findIngredientsBy(Long drugId) {
+        return findIngredientsOf(drugId);
+    }
 }
