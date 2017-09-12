@@ -33,16 +33,7 @@ public class Patient {
     }
 
     public boolean hasAllergyTo(DrugIngredient ingredient) {
-        boolean hasAllergy = false;
-        List<Allergy> patientAllergies = allergies();
-        for (Allergy allergy : patientAllergies) {
-            // If patient has allergy to the ingredient throw an exception
-            hasAllergy = allergy.ingredientId().equals(ingredient.id());
-
-            if (hasAllergy) {
-                break;
-            }
-        }
-        return hasAllergy;
+        return allergies().stream()
+                .anyMatch(allergy -> allergy.isProducedBy(ingredient));
     }
 }

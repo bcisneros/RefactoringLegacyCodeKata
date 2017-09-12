@@ -7,7 +7,11 @@ public class Allergy {
         this._ingredientId = ingredientId;
     }
 
-    public Long ingredientId() {
+    private Long ingredientId() {
         return _ingredientId;
+    }
+
+    boolean isProducedBy(DrugIngredient ingredient) {
+        return ingredientId().equals(ingredient.id());
     }
 }
