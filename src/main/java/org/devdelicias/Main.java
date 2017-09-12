@@ -14,6 +14,6 @@ public class Main {
 
     public static void main(String[] args) throws DispenseDrugException {
         LOGGER.info("Running DispenseDrugService");
-        new DispenseDrugService().dispenseDrugToPatient(new Drug(1L, "Xanax"), new Patient(PATIENT_ID, "Steven"));
+        new DispenseDrugService().dispenseDrugToPatient(new Drug(1L, "Xocor"), new Patient(PATIENT_ID, "Steven"));
     }
 }

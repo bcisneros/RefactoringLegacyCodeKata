@@ -17,46 +17,56 @@ import java.util.Date;
 import java.util.List;
 
 import static org.hamcrest.core.Is.is;
+import static org.mockito.Mockito.*;
 
 public class DispenseDrugServiceTest {
 
     private static final List<DrugIngredient> NO_INGREDIENTS = Collections.emptyList();
     private static final Date CURRENT_DATE = LocalDateTime.parse("2017-09-12T07:40").toDate();
     private static final Date FUTURE_DATE = LocalDateTime.parse("2017-09-12T08:40").toDate();
+    private static final DrugIngredient OTHER_VALID_INGREDIENT = new DrugIngredient(2L, "Other Ingredient", FUTURE_DATE);
+    private static final DrugIngredient A_NOT_EXPIRED_INGREDIENT = new DrugIngredient(1L, "Not Expired Ingredient", FUTURE_DATE);
     private static final Date PAST_DATE = LocalDateTime.parse("2017-08-12T09:00").toDate();
+    private static final DrugIngredient AN_EXPIRED_INGREDIENT = new DrugIngredient(2L, "Expired Ingredient", PAST_DATE);
     private static final DrugIngredient PENICILLIN = new DrugIngredient(156L, "Penicillin", FUTURE_DATE);
     private static final Allergy ALLERGY_TO_PENICILLIN = new Allergy(PENICILLIN.id());
+    private static final Drug LIPITOR = new Drug(1L, "Lipitor");
+    private static final Drug XANAX = new Drug(2L, "Xanax");
+    private static final Patient ANY_PATIENT = new Patient(5L, "Richard");
+    private static final Patient PATIENT_WITH_ALLERGY = patientWith(ALLERGY_TO_PENICILLIN);
+    private static final Drug ANTIBIOTIC = new Drug(3L, "Antibiotic");
+    private static final Drug A_DISPENSABLE_DRUG = new Drug(12L, "Any Drug");
+    private static final String ORDER_EXCEPTION_MESSAGE = "Order Exception Message";
+    private static final long ANY_PATIENT_ID = 6L;
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
-    DispenseDrugService dispenseDrugService = Mockito.spy(new DispenseDrugService());
+    private DispenseDrugService dispenseDrugService = Mockito.spy(new DispenseDrugService());
 
     @Before
     public void setUp() throws Exception {
-        Mockito.doReturn(CURRENT_DATE).when(dispenseDrugService).currentDateTime();
+        doReturn(CURRENT_DATE).when(dispenseDrugService).currentDateTime();
     }
 
     @Test
     public void validate_a_drug_should_have_ingredients() throws DispenseDrugException {
-        Drug lipitor = new Drug(1L, "Lipitor");
-        ingredientForDrugAre(lipitor, NO_INGREDIENTS);
-        Patient bob = new Patient(4L, "Bob");
         expectDispenseDrugExceptionWithMessage("There are not ingredients for drug: Lipitor");
+        configureDrugIngredients(LIPITOR, NO_INGREDIENTS);
 
-        dispenseDrugService.dispenseDrugToPatient(lipitor, bob);
+        dispenseDrugService.dispenseDrugToPatient(LIPITOR, null);
     }
 
     @Test
     public void validate_drug_ingredients_are_not_expired() throws DispenseDrugException {
-        Drug xanax = new Drug(2L, "Xanax");
-        Patient richard = new Patient(5L, "Richard");
         expectDispenseDrugExceptionWithMessage("Ingredient Expired Ingredient is expired.");
-        ingredientForDrugAre(xanax, ingredientListContaining(
-                new DrugIngredient(1L, "Not Expired Ingredient", FUTURE_DATE),
-                new DrugIngredient(2L, "Expired Ingredient", PAST_DATE)
-        ));
+        configureDrugIngredients(
+                XANAX,
+                ingredients(
+                        A_NOT_EXPIRED_INGREDIENT,
+                        AN_EXPIRED_INGREDIENT
+                ));
 
-        dispenseDrugService.dispenseDrugToPatient(xanax, richard);
+        dispenseDrugService.dispenseDrugToPatient(XANAX, ANY_PATIENT);
     }
 
     /**
@@ -64,50 +74,52 @@ public class DispenseDrugServiceTest {
      */
     @Test
     public void validate_drug_ingredient_does_not_produce_allergies_to_patient() throws DispenseDrugException {
-        Drug antibiotic = new Drug(3L, "Antibiotic");
-        Patient adam = new Patient(6L, "Adam");
-        adam.add(ALLERGY_TO_PENICILLIN);
-
-        ingredientForDrugAre(antibiotic, ingredientListContaining(
-                new DrugIngredient(1L, "Not Expired Ingredient", FUTURE_DATE),
-                PENICILLIN
-        ));
         expectDispenseDrugExceptionWithMessage("Could not dispense drug Antibiotic cause patient Adam has allergy to Penicillin");
+        configureDrugIngredients(
+                ANTIBIOTIC,
+                ingredients(
+                        A_NOT_EXPIRED_INGREDIENT,
+                        PENICILLIN
+                ));
 
-        dispenseDrugService.dispenseDrugToPatient(antibiotic, adam);
+        dispenseDrugService.dispenseDrugToPatient(ANTIBIOTIC, PATIENT_WITH_ALLERGY);
     }
 
     @Test
     public void create_new_order_when_drug_is_ok() throws DispenseDrugException, OrderException {
-        Drug validDrug = new Drug(12L, "Any Drug");
-        Patient anyPatient = new Patient(9L, "Juan");
-        ingredientForDrugAre(validDrug, ingredientListContaining(
-                new DrugIngredient(1L, "Not Expired Ingredient", FUTURE_DATE),
-                new DrugIngredient(2L, "Other Ingredient", FUTURE_DATE)));
-        Mockito.doNothing().when(dispenseDrugService).createOrder(validDrug, anyPatient);
+        configureDrugIngredients(
+                A_DISPENSABLE_DRUG,
+                ingredients(
+                        A_NOT_EXPIRED_INGREDIENT,
+                        OTHER_VALID_INGREDIENT
+                )
+        );
+        doNothing().when(dispenseDrugService).createOrder(A_DISPENSABLE_DRUG, ANY_PATIENT);
 
-        dispenseDrugService.dispenseDrugToPatient(validDrug, anyPatient);
+        dispenseDrugService.dispenseDrugToPatient(A_DISPENSABLE_DRUG, ANY_PATIENT);
 
-        Mockito.verify(dispenseDrugService).createOrder(validDrug, anyPatient);
+        verify(dispenseDrugService).createOrder(A_DISPENSABLE_DRUG, ANY_PATIENT);
     }
 
     @Test
     public void inform_when_new_order_fails() throws OrderException, DispenseDrugException {
-        Drug validDrug = new Drug(12L, "Any Drug");
-        Patient anyPatient = new Patient(9L, "Juan");
-        ingredientForDrugAre(validDrug, ingredientListContaining(
-                new DrugIngredient(1L, "Not Expired Ingredient", FUTURE_DATE)
+        configureDrugIngredients(A_DISPENSABLE_DRUG, ingredients(
+                A_NOT_EXPIRED_INGREDIENT
         ));
-        Mockito.doThrow(new OrderException("Order Exception Message")).when(dispenseDrugService).createOrder(validDrug, anyPatient);
-        expectDispenseDrugExceptionWithMessage("Order Exception Message");
+        doThrow(new OrderException(ORDER_EXCEPTION_MESSAGE)).when(dispenseDrugService).createOrder(A_DISPENSABLE_DRUG, ANY_PATIENT);
+        expectDispenseDrugExceptionWithMessage(ORDER_EXCEPTION_MESSAGE);
 
-        dispenseDrugService.dispenseDrugToPatient(validDrug, anyPatient);
+        dispenseDrugService.dispenseDrugToPatient(A_DISPENSABLE_DRUG, ANY_PATIENT);
     }
 
-    private void ingredientForDrugAre(Drug xanax, List<DrugIngredient> ingredients) {
-        Mockito.doReturn(
-                ingredients
-        ).when(dispenseDrugService).findIngredientsOf(xanax);
+    private static Patient patientWith(Allergy allergy) {
+        Patient patient = new Patient(ANY_PATIENT_ID, "Adam");
+        patient.add(allergy);
+        return patient;
+    }
+
+    private void configureDrugIngredients(Drug givenDrug, List<DrugIngredient> ingredients) {
+        doReturn(ingredients).when(dispenseDrugService).findIngredientsOf(givenDrug);
     }
 
     private void expectDispenseDrugExceptionWithMessage(String message) {
@@ -115,7 +127,7 @@ public class DispenseDrugServiceTest {
         expectedException.expectMessage(is(message));
     }
 
-    private List<DrugIngredient> ingredientListContaining(DrugIngredient... ingredients) {
+    private List<DrugIngredient> ingredients(DrugIngredient... ingredients) {
         return Arrays.asList(ingredients);
     }
 }
