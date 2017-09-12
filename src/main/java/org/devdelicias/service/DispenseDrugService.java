@@ -4,10 +4,10 @@ import org.devdelicias.model.Drug;
 import org.devdelicias.model.DrugIngredient;
 import org.devdelicias.model.Patient;
 import org.devdelicias.repository.DrugRepository;
+import org.devdelicias.util.Clock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Date;
 import java.util.List;
 
 public class DispenseDrugService {
@@ -15,6 +15,7 @@ public class DispenseDrugService {
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private OrderService orderService;
     private DrugRepository drugRepository;
+    private Clock clock = new Clock();
 
     public DispenseDrugService(OrderService orderService, DrugRepository drugRepository) {
         this.orderService = orderService;
@@ -28,7 +29,7 @@ public class DispenseDrugService {
 
         for (DrugIngredient ingredient : drugIngredients) {
 
-            if (ingredient.isExpiredAt(currentDateTime())) {
+            if (ingredient.isExpiredAt(clock.currentDateTime())) {
                 throwDispenseDrugExceptionWithMessage(String.format("Ingredient %s is expired.", ingredient.name()));
             }
 
@@ -60,9 +61,5 @@ public class DispenseDrugService {
 
     private void throwDispenseDrugExceptionWithMessage(String message) throws DispenseDrugException {
         throw new DispenseDrugException(message);
-    }
-
-    Date currentDateTime() {
-        return new Date();
     }
 }

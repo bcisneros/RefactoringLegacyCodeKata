@@ -5,12 +5,16 @@ import org.devdelicias.model.Drug;
 import org.devdelicias.model.DrugIngredient;
 import org.devdelicias.model.Patient;
 import org.devdelicias.repository.DrugRepository;
+import org.devdelicias.util.Clock;
 import org.joda.time.LocalDateTime;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -20,6 +24,7 @@ import java.util.List;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.Mockito.*;
 
+@RunWith(MockitoJUnitRunner.class)
 public class DispenseDrugServiceTest {
 
     private static final List<DrugIngredient> NO_INGREDIENTS = Collections.emptyList();
@@ -44,12 +49,14 @@ public class DispenseDrugServiceTest {
     public ExpectedException expectedException = ExpectedException.none();
     private OrderService orderService = mock(OrderService.class);
     private DrugRepository drugRepository = mock(DrugRepository.class);
+    private Clock clock = mock(Clock.class);
 
+    @InjectMocks
     private DispenseDrugService dispenseDrugService = Mockito.spy(new DispenseDrugService(orderService, drugRepository));
 
     @Before
     public void setUp() throws Exception {
-        doReturn(CURRENT_DATE).when(dispenseDrugService).currentDateTime();
+        doReturn(CURRENT_DATE).when(clock).currentDateTime();
     }
 
     @Test
