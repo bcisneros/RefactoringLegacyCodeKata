@@ -59,6 +59,9 @@ public class DispenseDrugServiceTest {
         dispenseDrugService.dispenseDrugToPatient(xanax, richard);
     }
 
+    /**
+     * US #123 Check if the patient has allergy to any ingredient of the drug
+     */
     @Test
     public void validate_drug_ingredient_does_not_produce_allergies_to_patient() throws DispenseDrugException {
         Drug antibiotic = new Drug(3L, "Antibiotic");

@@ -1,6 +1,5 @@
 package org.devdelicias.service;
 
-import org.devdelicias.model.Allergy;
 import org.devdelicias.model.Drug;
 import org.devdelicias.model.DrugIngredient;
 import org.devdelicias.model.Patient;
@@ -17,46 +16,42 @@ public class DispenseDrugService {
 
     public void dispenseDrugToPatient(Drug drug, Patient patient) throws DispenseDrugException {
 
-        // Find All ingredients of the drug
         List<DrugIngredient> drugIngredients = findIngredientsOf(drug);
 
-        // If exists ingredients
-        if (drugIngredients.size() > 0) {
-            // Iterate ingredients for validations
-            for (DrugIngredient ingredient : drugIngredients) {
+        validateAreIngredientsForGivenDrug(drug, drugIngredients);
 
-                // Check if the ingredient is expired
-                Date today = currentDateTime();
-                Date expirationDate = ingredient.expirationDate();
+        for (DrugIngredient ingredient : drugIngredients) {
 
-                if (expirationDate.before(today)) {
-                    throw new DispenseDrugException("Ingredient " + ingredient.name() + " is expired.");
-                } else {
-                    // US #123 Check if the patient has allergy to any ingredient of the drug
-                    List<Allergy> patientAllergies = patient.allergies();
-                    for (Allergy allergy : patientAllergies) {
-                        // If patient has allergy to the ingredient throw an exception
-                        if (allergy.ingredientId().equals(ingredient.id())) {
-                            throw new DispenseDrugException("Could not dispense drug " + drug.name() + " cause patient "
-                                    + patient.name() + " has allergy to " + ingredient.name());
-                        }
-                    }
-                }
+            if (ingredient.isExpiredAt(currentDateTime())) {
+                throwDispenseDrugExceptionWithMessage("Ingredient " + ingredient.name() + " is expired.");
             }
 
-            // Try to create new Order
-            try {
-                logger.info("Trying to create new order.");
-                createOrder(drug, patient);
-                logger.info("Order created.");
-
-            } catch (OrderException e) {
-                throw new DispenseDrugException(e.getMessage());
+            if (patient.hasAllergyTo(ingredient)) {
+                throwDispenseDrugExceptionWithMessage("Could not dispense drug " + drug.name() + " cause patient "
+                        + patient.name() + " has allergy to " + ingredient.name());
             }
-
-        } else {
-            throw new DispenseDrugException("There are not ingredients for drug: " + drug.name());
         }
+
+        tryToCreateNewOrder(drug, patient);
+    }
+
+    private void validateAreIngredientsForGivenDrug(Drug drug, List<DrugIngredient> drugIngredients) throws DispenseDrugException {
+        if (drugIngredients.isEmpty())
+            throwDispenseDrugExceptionWithMessage("There are not ingredients for drug: " + drug.name());
+    }
+
+    private void tryToCreateNewOrder(Drug drug, Patient patient) throws DispenseDrugException {
+        try {
+            logger.info("Trying to create new order.");
+            createOrder(drug, patient);
+            logger.info("Order created.");
+        } catch (OrderException e) {
+            throwDispenseDrugExceptionWithMessage(e.getMessage());
+        }
+    }
+
+    private void throwDispenseDrugExceptionWithMessage(String message) throws DispenseDrugException {
+        throw new DispenseDrugException(message);
     }
 
     protected void createOrder(Drug drug, Patient patient) throws OrderException {

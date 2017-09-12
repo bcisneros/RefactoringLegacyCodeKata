@@ -24,4 +24,9 @@ public class DrugIngredient {
     public Date expirationDate() {
         return _expirationDate;
     }
+
+    public boolean isExpiredAt(Date givenDate) {
+
+        return expirationDate().before(givenDate);
+    }
 }

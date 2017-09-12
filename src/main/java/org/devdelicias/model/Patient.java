@@ -31,4 +31,18 @@ public class Patient {
     public void add(Allergy... allergies) {
         this._allergies.addAll(asList(allergies));
     }
+
+    public boolean hasAllergyTo(DrugIngredient ingredient) {
+        boolean hasAllergy = false;
+        List<Allergy> patientAllergies = allergies();
+        for (Allergy allergy : patientAllergies) {
+            // If patient has allergy to the ingredient throw an exception
+            hasAllergy = allergy.ingredientId().equals(ingredient.id());
+
+            if (hasAllergy) {
+                break;
+            }
+        }
+        return hasAllergy;
+    }
 }
