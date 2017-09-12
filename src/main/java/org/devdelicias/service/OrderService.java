@@ -7,4 +7,8 @@ public class OrderService {
     public static void createOrder(Drug drug, Patient patient) throws OrderException {
         throw new UnsupportedOperationException();
     }
+
+    public void createNewOrder(Drug drug, Patient patient) throws OrderException {
+        createOrder(drug, patient);
+    }
 }
