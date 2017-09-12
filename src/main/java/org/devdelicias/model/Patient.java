@@ -24,7 +24,7 @@ public class Patient {
         return _name;
     }
 
-    public List<Allergy> allergies() {
+    private List<Allergy> allergies() {
         return _allergies;
     }
 
