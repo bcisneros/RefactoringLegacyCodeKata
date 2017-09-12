@@ -41,7 +41,8 @@ public class DispenseDrugServiceTest {
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
-    private DispenseDrugService dispenseDrugService = Mockito.spy(new DispenseDrugService());
+    private OrderService orderService = mock(OrderService.class);
+    private DispenseDrugService dispenseDrugService = Mockito.spy(new DispenseDrugService(orderService));
 
     @Before
     public void setUp() throws Exception {
@@ -94,11 +95,10 @@ public class DispenseDrugServiceTest {
                         OTHER_VALID_INGREDIENT
                 )
         );
-        doNothing().when(dispenseDrugService).createOrder(A_DISPENSABLE_DRUG, ANY_PATIENT);
 
         dispenseDrugService.dispenseDrugToPatient(A_DISPENSABLE_DRUG, ANY_PATIENT);
 
-        verify(dispenseDrugService).createOrder(A_DISPENSABLE_DRUG, ANY_PATIENT);
+        verify(orderService).createNewOrder(A_DISPENSABLE_DRUG, ANY_PATIENT);
     }
 
     @Test
@@ -106,7 +106,7 @@ public class DispenseDrugServiceTest {
         configureDrugIngredients(A_DISPENSABLE_DRUG, ingredients(
                 A_NOT_EXPIRED_INGREDIENT
         ));
-        doThrow(new OrderException(ORDER_EXCEPTION_MESSAGE)).when(dispenseDrugService).createOrder(A_DISPENSABLE_DRUG, ANY_PATIENT);
+        doThrow(new OrderException(ORDER_EXCEPTION_MESSAGE)).when(orderService).createNewOrder(A_DISPENSABLE_DRUG, ANY_PATIENT);
         expectDispenseDrugExceptionWithMessage(ORDER_EXCEPTION_MESSAGE);
 
         dispenseDrugService.dispenseDrugToPatient(A_DISPENSABLE_DRUG, ANY_PATIENT);

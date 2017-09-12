@@ -13,6 +13,11 @@ import java.util.List;
 public class DispenseDrugService {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
+    private OrderService orderService;
+
+    public DispenseDrugService(OrderService orderService) {
+        this.orderService = orderService;
+    }
 
     public void dispenseDrugToPatient(Drug drug, Patient patient) throws DispenseDrugException {
         List<DrugIngredient> drugIngredients = findIngredientsOf(drug);
@@ -44,7 +49,7 @@ public class DispenseDrugService {
     private void tryToCreateNewOrder(Drug drug, Patient patient) throws DispenseDrugException {
         try {
             logger.info("Trying to create new order.");
-            createOrder(drug, patient);
+            orderService.createNewOrder(drug, patient);
             logger.info("Order created.");
         } catch (OrderException e) {
             throwDispenseDrugExceptionWithMessage(e.getMessage());
@@ -53,10 +58,6 @@ public class DispenseDrugService {
 
     private void throwDispenseDrugExceptionWithMessage(String message) throws DispenseDrugException {
         throw new DispenseDrugException(message);
-    }
-
-    void createOrder(Drug drug, Patient patient) throws OrderException {
-        OrderService.createOrder(drug, patient);
     }
 
     Date currentDateTime() {

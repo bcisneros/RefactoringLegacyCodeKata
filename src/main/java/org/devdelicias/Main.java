@@ -4,6 +4,7 @@ import org.devdelicias.model.Drug;
 import org.devdelicias.model.Patient;
 import org.devdelicias.service.DispenseDrugException;
 import org.devdelicias.service.DispenseDrugService;
+import org.devdelicias.service.OrderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,6 +15,6 @@ public class Main {
 
     public static void main(String[] args) throws DispenseDrugException {
         LOGGER.info("Running DispenseDrugService");
-        new DispenseDrugService().dispenseDrugToPatient(new Drug(1L, "Xocor"), new Patient(PATIENT_ID, "Steven"));
+        new DispenseDrugService(new OrderService()).dispenseDrugToPatient(new Drug(1L, "Xocor"), new Patient(PATIENT_ID, "Steven"));
     }
 }
