@@ -15,29 +15,30 @@ public class DispenseDrugService {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     public void dispenseDrugToPatient(Drug drug, Patient patient) throws DispenseDrugException {
-
         List<DrugIngredient> drugIngredients = findIngredientsOf(drug);
 
-        validateAreIngredientsForGivenDrug(drug, drugIngredients);
+        validateDrugHasIngredients(drug, drugIngredients);
 
         for (DrugIngredient ingredient : drugIngredients) {
 
             if (ingredient.isExpiredAt(currentDateTime())) {
-                throwDispenseDrugExceptionWithMessage("Ingredient " + ingredient.name() + " is expired.");
+                throwDispenseDrugExceptionWithMessage(String.format("Ingredient %s is expired.", ingredient.name()));
             }
 
             if (patient.hasAllergyTo(ingredient)) {
-                throwDispenseDrugExceptionWithMessage("Could not dispense drug " + drug.name() + " cause patient "
-                        + patient.name() + " has allergy to " + ingredient.name());
+                throwDispenseDrugExceptionWithMessage(
+                        String.format("Could not dispense drug %s cause patient %s has allergy to %s",
+                                drug.name(), patient.name(), ingredient.name())
+                );
             }
         }
 
         tryToCreateNewOrder(drug, patient);
     }
 
-    private void validateAreIngredientsForGivenDrug(Drug drug, List<DrugIngredient> drugIngredients) throws DispenseDrugException {
+    private void validateDrugHasIngredients(Drug drug, List<DrugIngredient> drugIngredients) throws DispenseDrugException {
         if (drugIngredients.isEmpty())
-            throwDispenseDrugExceptionWithMessage("There are not ingredients for drug: " + drug.name());
+            throwDispenseDrugExceptionWithMessage(String.format("There are not ingredients for drug: %s", drug.name()));
     }
 
     private void tryToCreateNewOrder(Drug drug, Patient patient) throws DispenseDrugException {
@@ -54,15 +55,15 @@ public class DispenseDrugService {
         throw new DispenseDrugException(message);
     }
 
-    protected void createOrder(Drug drug, Patient patient) throws OrderException {
+    void createOrder(Drug drug, Patient patient) throws OrderException {
         OrderService.createOrder(drug, patient);
     }
 
-    protected Date currentDateTime() {
+    Date currentDateTime() {
         return new Date();
     }
 
-    protected List<DrugIngredient> findIngredientsOf(Drug givenDrug) {
+    List<DrugIngredient> findIngredientsOf(Drug givenDrug) {
         return DrugRepository.findIngredientsOf(givenDrug.id());
     }
 }
