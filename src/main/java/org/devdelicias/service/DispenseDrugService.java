@@ -18,7 +18,7 @@ public class DispenseDrugService {
     public void dispenseDrugToPatient(Drug drug, Patient patient) throws DispenseDrugException {
 
         // Find All ingredients of the drug
-        List<DrugIngredient> drugIngredients = DrugRepository.findIngredientsOf(drug.id());
+        List<DrugIngredient> drugIngredients = findIngredientsOf(drug);
 
         // If exists ingredients
         if (drugIngredients.size() > 0) {
@@ -26,7 +26,7 @@ public class DispenseDrugService {
             for (DrugIngredient ingredient : drugIngredients) {
 
                 // Check if the ingredient is expired
-                Date today = new Date();
+                Date today = currentDateTime();
                 Date expirationDate = ingredient.expirationDate();
 
                 if (expirationDate.before(today)) {
@@ -47,7 +47,7 @@ public class DispenseDrugService {
             // Try to create new Order
             try {
                 logger.info("Trying to create new order.");
-                OrderService.createOrder(drug, patient);
+                createOrder(drug, patient);
                 logger.info("Order created.");
 
             } catch (OrderException e) {
@@ -57,5 +57,17 @@ public class DispenseDrugService {
         } else {
             throw new DispenseDrugException("There are not ingredients for drug: " + drug.name());
         }
+    }
+
+    protected void createOrder(Drug drug, Patient patient) throws OrderException {
+        OrderService.createOrder(drug, patient);
+    }
+
+    protected Date currentDateTime() {
+        return new Date();
+    }
+
+    protected List<DrugIngredient> findIngredientsOf(Drug givenDrug) {
+        return DrugRepository.findIngredientsOf(givenDrug.id());
     }
 }
