@@ -13,7 +13,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mockito;
+import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Arrays;
@@ -30,29 +30,32 @@ public class DispenseDrugServiceTest {
     private static final List<DrugIngredient> NO_INGREDIENTS = Collections.emptyList();
     private static final Date CURRENT_DATE = LocalDateTime.parse("2017-09-12T07:40").toDate();
     private static final Date FUTURE_DATE = LocalDateTime.parse("2017-09-12T08:40").toDate();
+    private static final Date PAST_DATE = LocalDateTime.parse("2017-08-12T09:00").toDate();
     private static final DrugIngredient OTHER_VALID_INGREDIENT = new DrugIngredient(2L, "Other Ingredient", FUTURE_DATE);
     private static final DrugIngredient A_NOT_EXPIRED_INGREDIENT = new DrugIngredient(1L, "Not Expired Ingredient", FUTURE_DATE);
-    private static final Date PAST_DATE = LocalDateTime.parse("2017-08-12T09:00").toDate();
     private static final DrugIngredient AN_EXPIRED_INGREDIENT = new DrugIngredient(2L, "Expired Ingredient", PAST_DATE);
     private static final DrugIngredient PENICILLIN = new DrugIngredient(156L, "Penicillin", FUTURE_DATE);
     private static final Allergy ALLERGY_TO_PENICILLIN = new Allergy(PENICILLIN.id());
     private static final Drug LIPITOR = new Drug(1L, "Lipitor");
     private static final Drug XANAX = new Drug(2L, "Xanax");
-    private static final Patient ANY_PATIENT = new Patient(5L, "Richard");
-    private static final Patient PATIENT_WITH_ALLERGY = patientWith(ALLERGY_TO_PENICILLIN);
     private static final Drug ANTIBIOTIC = new Drug(3L, "Antibiotic");
     private static final Drug A_DISPENSABLE_DRUG = new Drug(12L, "Any Drug");
+    private static final Patient ANY_PATIENT = new Patient(5L, "Richard");
+    private static final Patient PATIENT_WITH_ALLERGY = patientWith(ALLERGY_TO_PENICILLIN);
     private static final String ORDER_EXCEPTION_MESSAGE = "Order Exception Message";
-    private static final long ANY_PATIENT_ID = 6L;
+    private static final Long ANY_PATIENT_ID = 6L;
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
-    private OrderService orderService = mock(OrderService.class);
-    private DrugRepository drugRepository = mock(DrugRepository.class);
-    private Clock clock = mock(Clock.class);
+    @Mock
+    private OrderService orderService;
+    @Mock
+    private DrugRepository drugRepository;
+    @Mock
+    private Clock clock;
 
     @InjectMocks
-    private DispenseDrugService dispenseDrugService = Mockito.spy(new DispenseDrugService(orderService, drugRepository));
+    private DispenseDrugService dispenseDrugService = new DispenseDrugService(orderService, drugRepository);
 
     @Before
     public void setUp() throws Exception {
