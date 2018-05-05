@@ -6,6 +6,8 @@ import java.util.List;
 
 public class DrugRepository {
     public static List<DrugIngredient> findIngredientsOf(Long drugId) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException(
+            "findIngredientsOf should not be invoked in a Unit Test"
+        );
     }
 }
