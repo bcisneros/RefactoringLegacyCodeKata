@@ -117,7 +117,7 @@ public class DispenseDrugServiceTest {
     @Test
     public void inform_when_new_order_fails() throws OrderException, DispenseDrugException {
         configureDrugIngredients(A_DISPENSABLE_DRUG, ingredients(
-                A_NOT_EXPIRED_INGREDIENT
+                A_NOT_EXPIRED_INGREDIENT, A_NOT_EXPIRED_INGREDIENT, A_NOT_EXPIRED_INGREDIENT
         ));
         doThrow(new OrderException(ORDER_EXCEPTION_MESSAGE)).when(orderService).createNewOrder(A_DISPENSABLE_DRUG, ANY_PATIENT);
         expectDispenseDrugExceptionWithMessage(ORDER_EXCEPTION_MESSAGE);
