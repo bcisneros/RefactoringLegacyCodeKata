@@ -67,7 +67,7 @@ public class DispenseDrugService {
                 } else {
                     // US #123 Check if the patient has allergy to any
                     // ingredient of the drug
-                    List<Allergy> patientAllergies = patient.allergies();
+                    List<Allergy> patientAllergies = patient.allAllergies();
                     for (Allergy allergy : patientAllergies) {
                         // If patient has allergy to the ingredient
                         // throw an exception
@@ -75,7 +75,7 @@ public class DispenseDrugService {
                             throw new DispenseDrugException(
                                 "Could not dispense drug " + drug.fullName()
                                     + " cause patient "
-                                    + patient.name() + " has allergy to "
+                                    + patient.fullName() + " has allergy to "
                                     + ingredient.fullName());
                         }
                     }

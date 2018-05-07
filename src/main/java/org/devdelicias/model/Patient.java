@@ -10,8 +10,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -24,40 +24,74 @@
 package org.devdelicias.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-
-import static java.util.Arrays.asList;
 
 /**
  * Class Patient.
- * @author Benjamin Cisneros (cisnerosbarraza@gmail.com)
- * @version $Id$
+ *
  * @since 1.0
  */
 public class Patient {
-    private final Long _id;
-    private final String _name;
-    private final List<Allergy> _allergies;
+    /**
+     * The id.
+     */
+    private final Long id;
+    /**
+     * The name.
+     */
+    private final String name;
+    /**
+     * The allergies.
+     */
+    private final List<Allergy> allergies;
 
-    public Patient(Long id, String name) {
-        _id = id;
-        _name = name;
-        _allergies = new ArrayList<>();
+    /**
+     * Creates a new Patient.
+     *
+     * @param id The Patient id.
+     * @param name The Patient full name.
+     */
+    public Patient(final Long id, final String name) {
+        this.id = id;
+        this.name = name;
+        this.allergies = new ArrayList<>(1);
     }
 
-    public Long id() {
-        return _id;
+    /**
+     * Gets the Patient Identifier.
+     *
+     * @return Patient Id.
+     */
+    public final Long identifier() {
+        return this.id;
     }
 
-    public String name() {
-        return _name;
+    /**
+     * Gets the Patient Full Name.
+     *
+     * @return Patient Full Name.
+     */
+    public final String fullName() {
+        return this.name;
     }
 
-    public List<Allergy> allergies() {
-        return _allergies;
+    /**
+     * Retrieves all Allergies but cannot be modified.
+     *
+     * @return All allergies of the patient.
+     */
+    public final List<Allergy> allAllergies() {
+        return Collections.unmodifiableList(this.allergies);
     }
 
-    public void add(Allergy... allergies) {
-        this._allergies.addAll(asList(allergies));
+    /**
+     * Allow to add new allergies to Patient.
+     *
+     * @param more New allergies.
+     */
+    public final void add(final Allergy... more) {
+        this.allergies.addAll(Arrays.asList(more));
     }
 }
