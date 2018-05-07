@@ -23,6 +23,12 @@
  */
 package org.devdelicias.service;
 
+/**
+ * Class OrderException.
+ * @author Benjamin Cisneros (cisnerosbarraza@gmail.com)
+ * @version $Id$
+ * @since 1.0
+ */
 class OrderException extends Exception {
     OrderException(String message) {
         super(message);

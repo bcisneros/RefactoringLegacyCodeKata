@@ -30,6 +30,12 @@ import org.devdelicias.service.DispenseDrugService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Main Class.
+ * @author Benjamin Cisneros (cisnerosbarraza@gmail.com)
+ * @version $Id$
+ * @since 1.0
+ */
 public class Main {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);

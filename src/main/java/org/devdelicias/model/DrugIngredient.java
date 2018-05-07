@@ -25,6 +25,12 @@ package org.devdelicias.model;
 
 import java.util.Date;
 
+/**
+ * Class DrugIngredient.
+ * @author Benjamin Cisneros (cisnerosbarraza@gmail.com)
+ * @version $Id$
+ * @since 1.0
+ */
 public class DrugIngredient {
     private final Long _id;
     private final String _name;

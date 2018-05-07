@@ -28,6 +28,12 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Class Drug.
+ * @author Benjamin Cisneros (cisnerosbarraza@gmail.com)
+ * @version $Id$
+ * @since 1.0
+ */
 public class Drug {
     private final Long _id;
     private final String _name;

@@ -23,6 +23,12 @@
  */
 package org.devdelicias.model;
 
+/**
+ * Class Allergy.
+ * @author Benjamin Cisneros (cisnerosbarraza@gmail.com)
+ * @version $Id$
+ * @since 1.0
+ */
 public class Allergy {
     private final Long _ingredientId;
 

@@ -34,6 +34,12 @@ import org.slf4j.LoggerFactory;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Class DispenseDrugService.
+ * @author Benjamin Cisneros (cisnerosbarraza@gmail.com)
+ * @version $Id$
+ * @since 1.0
+ */
 public class DispenseDrugService {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());

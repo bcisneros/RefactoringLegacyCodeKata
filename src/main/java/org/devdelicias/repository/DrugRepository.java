@@ -27,6 +27,12 @@ import org.devdelicias.model.DrugIngredient;
 
 import java.util.List;
 
+/**
+ * Class DrugRepository.
+ * @author Benjamin Cisneros (cisnerosbarraza@gmail.com)
+ * @version $Id$
+ * @since 1.0
+ */
 public class DrugRepository {
     public static List<DrugIngredient> findIngredientsOf(Long drugId) {
         throw new UnsupportedOperationException(

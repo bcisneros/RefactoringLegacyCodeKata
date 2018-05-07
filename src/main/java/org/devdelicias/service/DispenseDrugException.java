@@ -23,6 +23,12 @@
  */
 package org.devdelicias.service;
 
+/**
+ * Class DispenseDrugException.
+ * @author Benjamin Cisneros (cisnerosbarraza@gmail.com)
+ * @version $Id$
+ * @since 1.0
+ */
 public class DispenseDrugException extends Exception {
     DispenseDrugException(String message) {
         super(message);

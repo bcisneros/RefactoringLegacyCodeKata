@@ -25,7 +25,12 @@ package org.devdelicias.service;
 
 import org.devdelicias.model.Drug;
 import org.devdelicias.model.Patient;
-
+/**
+ * Class OrderService.
+ * @author Benjamin Cisneros (cisnerosbarraza@gmail.com)
+ * @version $Id$
+ * @since 1.0
+ */
 public class OrderService {
     public static void createOrder(Drug drug, Patient patient)
         throws OrderException {

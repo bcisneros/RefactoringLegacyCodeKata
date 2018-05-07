@@ -28,6 +28,12 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 
+/**
+ * Class Patient.
+ * @author Benjamin Cisneros (cisnerosbarraza@gmail.com)
+ * @version $Id$
+ * @since 1.0
+ */
 public class Patient {
     private final Long _id;
     private final String _name;
