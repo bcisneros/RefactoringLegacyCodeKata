@@ -10,8 +10,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -23,6 +23,8 @@
  */
 package org.devdelicias.service;
 
+import java.util.Date;
+import java.util.List;
 import org.devdelicias.model.Allergy;
 import org.devdelicias.model.Drug;
 import org.devdelicias.model.Ingredient;
@@ -31,46 +33,43 @@ import org.devdelicias.repository.DrugRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Date;
-import java.util.List;
-
 /**
  * Class DispenseDrugService.
- * @author Benjamin Cisneros (cisnerosbarraza@gmail.com)
- * @version $Id$
+ *
  * @since 1.0
  */
 public class DispenseDrugService {
 
+    /**
+     * The logger.
+     */
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    public void dispenseDrugToPatient(Drug drug, Patient patient)
+    /**
+     * Validates if is possible to dispense a Drug to a Patient.
+     *
+     * @param drug The drug to be dispensed
+     * @param patient The patient to dispense the drug
+     * @throws DispenseDrugException If drug is has not ingredients, is expired
+     *  or contains ingredients that are un-safe to patient. Also if the order
+     *  service fails to process the order.
+     */
+    public final void dispenseDrugToPatient(
+        final Drug drug, final Patient patient)
         throws DispenseDrugException {
-
-        // Find All ingredients of the drug
-        List<Ingredient> ingredients =
+        final List<Ingredient> ingredients =
             DrugRepository.findIngredientsOf(drug.identifier());
-
-        // If exists ingredients
         if (ingredients.size() > 0) {
-            // Iterate ingredients for validations
-            for (Ingredient ingredient : ingredients) {
-
-                // Check if the ingredient is expired
-                Date today = new Date();
-                Date expirationDate = ingredient.expirationDate();
-
-                if (expirationDate.before(today)) {
+            for (final Ingredient ingredient : ingredients) {
+                final Date today = new Date();
+                final Date expiration = ingredient.expirationDate();
+                if (expiration.before(today)) {
                     throw new DispenseDrugException(
                         "Ingredient " + ingredient.fullName() + " is expired."
                     );
                 } else {
-                    // US #123 Check if the patient has allergy to any
-                    // ingredient of the drug
-                    List<Allergy> patientAllergies = patient.allAllergies();
-                    for (Allergy allergy : patientAllergies) {
-                        // If patient has allergy to the ingredient
-                        // throw an exception
+                    List<Allergy> allergies = patient.allAllergies();
+                    for (Allergy allergy : allergies) {
                         if (allergy.ingredient().equals(ingredient)) {
                             throw new DispenseDrugException(
                                 "Could not dispense drug " + drug.fullName()
@@ -81,17 +80,13 @@ public class DispenseDrugService {
                     }
                 }
             }
-
-            // Try to create new Order
             try {
-                logger.info("Trying to create new order.");
+                this.logger.info("Trying to create new order.");
                 OrderService.createOrder(drug, patient);
-                logger.info("Order created.");
-
+                this.logger.info("Order created.");
             } catch (OrderException e) {
                 throw new DispenseDrugException(e.getMessage());
             }
-
         } else {
             throw new DispenseDrugException(
                 "There are not ingredients for drug: " + drug.fullName()
