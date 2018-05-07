@@ -25,7 +25,7 @@ package org.devdelicias.service;
 
 import org.devdelicias.model.Allergy;
 import org.devdelicias.model.Drug;
-import org.devdelicias.model.DrugIngredient;
+import org.devdelicias.model.Ingredient;
 import org.devdelicias.model.Patient;
 import org.devdelicias.repository.DrugRepository;
 import org.slf4j.Logger;
@@ -48,13 +48,13 @@ public class DispenseDrugService {
         throws DispenseDrugException {
 
         // Find All ingredients of the drug
-        List<DrugIngredient> drugIngredients =
+        List<Ingredient> ingredients =
             DrugRepository.findIngredientsOf(drug.identifier());
 
         // If exists ingredients
-        if (drugIngredients.size() > 0) {
+        if (ingredients.size() > 0) {
             // Iterate ingredients for validations
-            for (DrugIngredient ingredient : drugIngredients) {
+            for (Ingredient ingredient : ingredients) {
 
                 // Check if the ingredient is expired
                 Date today = new Date();
@@ -62,7 +62,7 @@ public class DispenseDrugService {
 
                 if (expirationDate.before(today)) {
                     throw new DispenseDrugException(
-                        "Ingredient " + ingredient.name() + " is expired."
+                        "Ingredient " + ingredient.fullName() + " is expired."
                     );
                 } else {
                     // US #123 Check if the patient has allergy to any
@@ -76,7 +76,7 @@ public class DispenseDrugService {
                                 "Could not dispense drug " + drug.fullName()
                                     + " cause patient "
                                     + patient.name() + " has allergy to "
-                                    + ingredient.name());
+                                    + ingredient.fullName());
                         }
                     }
                 }

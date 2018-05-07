@@ -23,7 +23,7 @@
  */
 package org.devdelicias.repository;
 
-import org.devdelicias.model.DrugIngredient;
+import org.devdelicias.model.Ingredient;
 
 import java.util.List;
 
@@ -34,7 +34,7 @@ import java.util.List;
  * @since 1.0
  */
 public class DrugRepository {
-    public static List<DrugIngredient> findIngredientsOf(Long drugId) {
+    public static List<Ingredient> findIngredientsOf(Long drugId) {
         throw new UnsupportedOperationException(
             "findIngredientsOf should not be invoked in a Unit Test"
         );

@@ -23,32 +23,64 @@
  */
 package org.devdelicias.model;
 
+import java.util.Date;
+
 /**
- * Class Allergy.
+ * Class Ingredient.
  *
  * @since 1.0
  */
-public class Allergy {
+public class Ingredient {
     /**
-     * The producer who produces the allergy.
+     * The identifier.
      */
-    private final Ingredient producer;
+    private final Long id;
+    /**
+     * The name.
+     */
+    private final String name;
+    /**
+     * The expiration date.
+     */
+    private final Date expires;
 
     /**
-     * Creates a new Allergy object based on the producer that produces.
+     * Creates new Ingredient.
      *
-     * @param ingredient The producer who produces this allergy
+     * @param id The identifier.
+     * @param name Then name.
+     * @param expires The expiration date.
      */
-    public Allergy(final Ingredient ingredient) {
-        this.producer = ingredient;
+    public Ingredient(final Long id, final String name, final Date expires) {
+        this.id = id;
+        this.name = name;
+        this.expires = expires;
     }
 
     /**
-     * Retrieves a reference to the producer who produces the allergy.
+     * Returns the identifier.
      *
-     * @return An Ingredient
+     * @return The identifier.
      */
-    public final Ingredient ingredient() {
-        return this.producer;
+    public final Long identifier() {
+        return this.id;
+    }
+
+    /**
+     * Returns the name.
+     *
+     * @return The name
+     */
+    public final String fullName() {
+        return this.name;
+    }
+
+    /**
+     * Return the expiration date.
+     *
+     * @return The expiration date.
+     */
+    public final Date expirationDate() {
+        return this.expires;
     }
 }

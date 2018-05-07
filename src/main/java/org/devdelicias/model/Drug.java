@@ -50,7 +50,7 @@ public class Drug {
     /**
      * The collection of ingredients of the Drug.
      */
-    private final List<DrugIngredient> ingredients;
+    private final List<Ingredient> ingredients;
 
     /**
      * Creates a new Drug with a given identifier and name.
@@ -88,7 +88,7 @@ public class Drug {
      *
      * @param more One or more ingredients to add
      */
-    public final void add(final DrugIngredient... more) {
+    public final void add(final Ingredient... more) {
         this.ingredients.addAll(Arrays.asList(more));
     }
 
@@ -97,7 +97,7 @@ public class Drug {
      *
      * @return An unmodifiable list of ingredients
      */
-    public final List<DrugIngredient> allIngredients() {
+    public final List<Ingredient> allIngredients() {
         return Collections.unmodifiableList(this.ingredients);
     }
 }
