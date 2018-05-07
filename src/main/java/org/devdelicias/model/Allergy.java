@@ -30,13 +30,13 @@ package org.devdelicias.model;
  * @since 1.0
  */
 public class Allergy {
-    private final Long _ingredientId;
+    private final DrugIngredient ingredient;
 
-    public Allergy(Long ingredientId) {
-        this._ingredientId = ingredientId;
+    public Allergy(DrugIngredient ingredient) {
+        this.ingredient = ingredient;
     }
 
-    public Long ingredientId() {
-        return _ingredientId;
+    public DrugIngredient ingredient() {
+        return ingredient;
     }
 }
