@@ -10,8 +10,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -30,34 +30,74 @@ import java.util.List;
 
 /**
  * Class Drug.
- * @author Benjamin Cisneros (cisnerosbarraza@gmail.com)
- * @version $Id$
+ *
  * @since 1.0
  */
 public class Drug {
-    private final Long _id;
-    private final String _name;
-    private List<DrugIngredient> ingredients;
+    /**
+     * The initial capacity of list of ingredients.
+     */
+    private static final int INITIAL_CAPACITY = 10;
+    /**
+     * The Drug identifier.
+     */
+    private final Long id;
+    /**
+     * The Drug Name.
+     */
+    private final String name;
 
-    public Drug(Long id, String name) {
-        _id = id;
-        _name = name;
-        ingredients = new ArrayList<>();
+    /**
+     * The collection of ingredients of the Drug.
+     */
+    private final List<DrugIngredient> ingredients;
+
+    /**
+     * Creates a new Drug with a given identifier and name.
+     * By default a Drug has not any ingredient.
+     *
+     * @param id The Drug identifier
+     * @param name The Drug name
+     */
+    public Drug(final Long id, final String name) {
+        this.id = id;
+        this.name = name;
+        this.ingredients = new ArrayList<>(Drug.INITIAL_CAPACITY);
     }
 
-    public Long id() {
-        return _id;
+    /**
+     * Returns the Drug Identifier.
+     *
+     * @return A Long number.
+     */
+    public final Long identifier() {
+        return this.id;
     }
 
-    public String name() {
-        return _name;
+    /**
+     * Returns the Drug name.
+     *
+     * @return The name of the Drug.
+     */
+    public final String fullName() {
+        return this.name;
     }
 
-    public void add(DrugIngredient... drugIngredients) {
-        this.ingredients.addAll(Arrays.asList(drugIngredients));
+    /**
+     * Allows to add more ingredients to the Drug.
+     *
+     * @param more One or more ingredients to add
+     */
+    public final void add(final DrugIngredient... more) {
+        this.ingredients.addAll(Arrays.asList(more));
     }
 
-    public List<DrugIngredient> ingredients() {
+    /**
+     * Gets a reference of the ingredient list, but is not modifiable.
+     *
+     * @return An unmodifiable list of ingredients
+     */
+    public final List<DrugIngredient> allIngredients() {
         return Collections.unmodifiableList(this.ingredients);
     }
 }

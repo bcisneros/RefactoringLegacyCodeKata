@@ -10,8 +10,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -25,18 +25,30 @@ package org.devdelicias.model;
 
 /**
  * Class Allergy.
- * @author Benjamin Cisneros (cisnerosbarraza@gmail.com)
- * @version $Id$
+ *
  * @since 1.0
  */
 public class Allergy {
-    private final DrugIngredient ingredient;
+    /**
+     * The producer who produces the allergy.
+     */
+    private final DrugIngredient producer;
 
-    public Allergy(DrugIngredient ingredient) {
-        this.ingredient = ingredient;
+    /**
+     * Creates a new Allergy object based on the producer that produces.
+     *
+     * @param ingredient The producer who produces this allergy
+     */
+    public Allergy(final DrugIngredient ingredient) {
+        this.producer = ingredient;
     }
 
-    public DrugIngredient ingredient() {
-        return ingredient;
+    /**
+     * Retrieves a reference to the producer who produces the allergy.
+     *
+     * @return An Ingredient
+     */
+    public final DrugIngredient ingredient() {
+        return this.producer;
     }
 }

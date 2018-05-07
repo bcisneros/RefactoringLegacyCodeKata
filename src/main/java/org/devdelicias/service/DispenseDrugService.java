@@ -49,7 +49,7 @@ public class DispenseDrugService {
 
         // Find All ingredients of the drug
         List<DrugIngredient> drugIngredients =
-            DrugRepository.findIngredientsOf(drug.id());
+            DrugRepository.findIngredientsOf(drug.identifier());
 
         // If exists ingredients
         if (drugIngredients.size() > 0) {
@@ -73,7 +73,7 @@ public class DispenseDrugService {
                         // throw an exception
                         if (allergy.ingredient().equals(ingredient)) {
                             throw new DispenseDrugException(
-                                "Could not dispense drug " + drug.name()
+                                "Could not dispense drug " + drug.fullName()
                                     + " cause patient "
                                     + patient.name() + " has allergy to "
                                     + ingredient.name());
@@ -94,7 +94,7 @@ public class DispenseDrugService {
 
         } else {
             throw new DispenseDrugException(
-                "There are not ingredients for drug: " + drug.name()
+                "There are not ingredients for drug: " + drug.fullName()
             );
         }
     }
