@@ -43,7 +43,7 @@ public class DispenseDrugService {
 
         // Find All ingredients of the drug
         List<DrugIngredient> drugIngredients =
-            DrugRepository.findIngredientsOf(drug.id());
+            ingredientsOf(drug);
 
         // If exists ingredients
         if (drugIngredients.size() > 0) {
@@ -91,5 +91,9 @@ public class DispenseDrugService {
                 "There are not ingredients for drug: " + drug.name()
             );
         }
+    }
+
+    protected List<DrugIngredient> ingredientsOf(Drug drug) {
+        return DrugRepository.findIngredientsOf(drug.id());
     }
 }
