@@ -4,18 +4,18 @@ import java.util.List;
 import org.devdelicias.model.Drug;
 import org.devdelicias.model.DrugIngredient;
 import org.devdelicias.model.Patient;
-import static org.junit.Assert.*;
 import org.junit.Test;
 
 public class DispenseDrugServiceTest {
+
+    private static final Patient UNUSED_PATIENT = null;
 
     @Test(expected = DispenseDrugException.class)
     public void cantDispenseDrugIfThereAreNotIngredients() throws DispenseDrugException {
         DispenseDrugService service = new TestableDispenseDrugService();
         Drug drug = new Drug(1L, "Drug Name");
-        Patient patient = null;
 
-        service.dispenseDrugToPatient(drug, patient);
+        service.dispenseDrugToPatient(drug, UNUSED_PATIENT);
     }
 
     private class TestableDispenseDrugService extends DispenseDrugService {
