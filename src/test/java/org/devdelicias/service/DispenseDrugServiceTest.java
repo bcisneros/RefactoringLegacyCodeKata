@@ -5,37 +5,60 @@ import java.util.List;
 import org.devdelicias.model.Drug;
 import org.devdelicias.model.DrugIngredient;
 import org.devdelicias.model.Patient;
+import static org.hamcrest.core.Is.is;
 import org.joda.time.LocalDate;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 public class DispenseDrugServiceTest {
 
+    private static final long ANY_DRUG_ID = 6L;
+    private static final String ANY_DRUG_NAME = "Any Drug Name";
+    private static final long ANY_INGREDIENT_ID = 63L;
+    private DispenseDrugService service = new TestableDispenseDrugService();
     private static final Patient UNUSED_PATIENT = null;
 
-    @Test(expected = DispenseDrugException.class)
-    public void cantDispenseDrugIfThereAreNotIngredients() throws DispenseDrugException {
-        DispenseDrugService service = new TestableDispenseDrugService();
-        Drug drug = new Drug(1L, "Drug Name");
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
+    private Date currentDate;
 
-        service.dispenseDrugToPatient(drug, UNUSED_PATIENT);
+    @Test
+    public void cantDispenseDrugIfThereAreNotIngredients() throws DispenseDrugException {
+        String drugName = "Lipitor";
+        Drug drugWithoutIngredients = new Drug(ANY_DRUG_ID, drugName);
+
+        expectedException.expect(DispenseDrugException.class);
+        expectedException.expectMessage(is("There are not ingredients for drug: Lipitor"));
+
+        service.dispenseDrugToPatient(drugWithoutIngredients, UNUSED_PATIENT);
     }
 
-    @Test(expected = DispenseDrugException.class)
+    @Test
     public void cantDispenseDrugIfAnyIngredientIsExpired() throws DispenseDrugException {
-        DispenseDrugService service = new TestableDispenseDrugService();
-        Drug drug = new Drug(1L, "Drug Name");
-        Date yesterday = LocalDate.parse("2018-05-07").toDate();
-        DrugIngredient expiredIngredient = new DrugIngredient(1L, "Expired Ing.", yesterday);
+        currentDate = LocalDate.parse("2018-05-10").toDate();
+        Date yesterday = LocalDate.parse("2018-05-09").toDate();
+        String ingredientName = "Vitamin A";
+        Drug drug = new Drug(ANY_DRUG_ID, ANY_DRUG_NAME);
+        DrugIngredient expiredIngredient = new DrugIngredient(
+            ANY_INGREDIENT_ID, ingredientName, yesterday);
         drug.add(expiredIngredient);
-        Patient patient = null;
 
-        service.dispenseDrugToPatient(drug, patient);
+        expectedException.expect(DispenseDrugException.class);
+        expectedException.expectMessage(is("Ingredient Vitamin A is expired."));
+
+        service.dispenseDrugToPatient(drug, UNUSED_PATIENT);
     }
 
     private class TestableDispenseDrugService extends DispenseDrugService {
         @Override
         protected List<DrugIngredient> ingredientsOf(Drug drug) {
             return drug.ingredients();
+        }
+
+        @Override
+        protected Date currentDate() {
+            return currentDate;
         }
     }
 }

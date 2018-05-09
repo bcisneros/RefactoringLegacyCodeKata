@@ -51,7 +51,7 @@ public class DispenseDrugService {
             for (DrugIngredient ingredient : drugIngredients) {
 
                 // Check if the ingredient is expired
-                Date today = new Date();
+                Date today = currentDate();
                 Date expirationDate = ingredient.expirationDate();
 
                 if (expirationDate.before(today)) {
@@ -91,6 +91,10 @@ public class DispenseDrugService {
                 "There are not ingredients for drug: " + drug.name()
             );
         }
+    }
+
+    protected Date currentDate() {
+        return new Date();
     }
 
     protected List<DrugIngredient> ingredientsOf(Drug drug) {
