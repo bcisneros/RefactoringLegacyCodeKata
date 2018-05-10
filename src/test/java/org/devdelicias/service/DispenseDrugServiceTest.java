@@ -17,6 +17,7 @@ public class DispenseDrugServiceTest {
     private static final long ANY_DRUG_ID = 6L;
     private static final String ANY_DRUG_NAME = "Any Drug Name";
     private static final long ANY_INGREDIENT_ID = 63L;
+    private static final long ANY_PATIENT_ID = 56L;
     private DispenseDrugService service = new TestableDispenseDrugService();
     private static final Patient UNUSED_PATIENT = null;
 
@@ -29,42 +30,54 @@ public class DispenseDrugServiceTest {
         String drugName = "Lipitor";
         Drug drugWithoutIngredients = new Drug(ANY_DRUG_ID, drugName);
 
-        expectedException.expect(DispenseDrugException.class);
-        expectedException.expectMessage(is("There are not ingredients for drug: Lipitor"));
+        cantDispenseBecause("There are not ingredients for drug: Lipitor");
 
         service.dispenseDrugToPatient(drugWithoutIngredients, UNUSED_PATIENT);
     }
 
     @Test
     public void cantDispenseDrugIfAnyIngredientIsExpired() throws DispenseDrugException {
-        currentDate = LocalDate.parse("2018-05-10").toDate();
-        Date yesterday = LocalDate.parse("2018-05-09").toDate();
+        currentDate = toDate("2018-05-10");
+        Date yesterday = toDate("2018-05-09");
         String ingredientName = "Vitamin A";
         Drug drug = new Drug(ANY_DRUG_ID, ANY_DRUG_NAME);
         DrugIngredient expiredIngredient = new DrugIngredient(
             ANY_INGREDIENT_ID, ingredientName, yesterday);
         drug.add(expiredIngredient);
 
-        expectedException.expect(DispenseDrugException.class);
-        expectedException.expectMessage(is("Ingredient Vitamin A is expired."));
+        cantDispenseBecause("Ingredient Vitamin A is expired.");
 
         service.dispenseDrugToPatient(drug, UNUSED_PATIENT);
     }
 
     @Test
     public void cantDispenseDrugIfProducesAllergyToPatient() throws DispenseDrugException {
-        Drug antibiotic = new Drug(1L, "Antibiotic");
-        currentDate = LocalDate.parse("2018-04-01").toDate();
-        Date nextMonth = LocalDate.parse("2018-05-01").toDate();
-        DrugIngredient penicillin = new DrugIngredient(25L, "Penicillin", nextMonth);
+        String drugName = "Antibiotic";
+        String ingredientName = "Penicillin";
+        String patientName = "Bob";
+        currentDate = toDate("2018-04-01");
+        Date nextMonth = toDate("2018-05-01");
+
+        DrugIngredient penicillin = new DrugIngredient(ANY_INGREDIENT_ID, ingredientName, nextMonth);
+
+        Drug antibiotic = new Drug(ANY_DRUG_ID, drugName);
         antibiotic.add(penicillin);
-        Patient patientWithAllergyToPenicillin = new Patient(1L, "Bob");
-        patientWithAllergyToPenicillin.add(allergyTo(penicillin));
 
+        Patient patient = new Patient(ANY_PATIENT_ID, patientName);
+        patient.add(allergyTo(penicillin));
+
+        cantDispenseBecause("Could not dispense drug Antibiotic cause patient Bob has allergy to Penicillin");
+
+        service.dispenseDrugToPatient(antibiotic, patient);
+    }
+
+    private Date toDate(String aDate) {
+        return LocalDate.parse(aDate).toDate();
+    }
+
+    private void cantDispenseBecause(String reason) {
         expectedException.expect(DispenseDrugException.class);
-        expectedException.expectMessage(is("Could not dispense drug Antibiotic cause patient Bob has allergy to Penicillin"));
-
-        service.dispenseDrugToPatient(antibiotic, patientWithAllergyToPenicillin);
+        expectedException.expectMessage(is(reason));
     }
 
     private Allergy allergyTo(DrugIngredient ingredient) {
