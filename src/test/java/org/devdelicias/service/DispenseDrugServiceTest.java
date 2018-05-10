@@ -2,6 +2,7 @@ package org.devdelicias.service;
 
 import java.util.Date;
 import java.util.List;
+import org.devdelicias.model.Allergy;
 import org.devdelicias.model.Drug;
 import org.devdelicias.model.DrugIngredient;
 import org.devdelicias.model.Patient;
@@ -48,6 +49,26 @@ public class DispenseDrugServiceTest {
         expectedException.expectMessage(is("Ingredient Vitamin A is expired."));
 
         service.dispenseDrugToPatient(drug, UNUSED_PATIENT);
+    }
+
+    @Test
+    public void cantDispenseDrugIfProducesAllergyToPatient() throws DispenseDrugException {
+        Drug antibiotic = new Drug(1L, "Antibiotic");
+        currentDate = LocalDate.parse("2018-04-01").toDate();
+        Date nextMonth = LocalDate.parse("2018-05-01").toDate();
+        DrugIngredient penicillin = new DrugIngredient(25L, "Penicillin", nextMonth);
+        antibiotic.add(penicillin);
+        Patient patientWithAllergyToPenicillin = new Patient(1L, "Bob");
+        patientWithAllergyToPenicillin.add(allergyTo(penicillin));
+
+        expectedException.expect(DispenseDrugException.class);
+        expectedException.expectMessage(is("Could not dispense drug Antibiotic cause patient Bob has allergy to Penicillin"));
+
+        service.dispenseDrugToPatient(antibiotic, patientWithAllergyToPenicillin);
+    }
+
+    private Allergy allergyTo(DrugIngredient ingredient) {
+        return new Allergy(ingredient.id());
     }
 
     private class TestableDispenseDrugService extends DispenseDrugService {
