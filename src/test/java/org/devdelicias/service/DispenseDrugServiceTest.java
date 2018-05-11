@@ -19,6 +19,7 @@ public class DispenseDrugServiceTest {
     private static final String ANY_DRUG_NAME = "Any Drug Name";
     private static final long ANY_INGREDIENT_ID = 63L;
     private static final long ANY_PATIENT_ID = 56L;
+    public static final String ORDER_EXCEPTION_MESSAGE = "Order Service Failed";
     private DispenseDrugService service = new TestableDispenseDrugService();
     private static final Patient UNUSED_PATIENT = null;
 
@@ -26,6 +27,7 @@ public class DispenseDrugServiceTest {
     public ExpectedException expectedException = ExpectedException.none();
     private Date currentDate;
     private boolean orderCreated = false;
+    private OrderException orderException = null;
 
     @Test
     public void cantDispenseDrugIfThereAreNotIngredients() throws DispenseDrugException {
@@ -97,6 +99,27 @@ public class DispenseDrugServiceTest {
         );
     }
 
+    @Test
+    public void cantDispenseDrugIfOrderServiceFailsToCreateNewOrder() throws DispenseDrugException {
+        currentDate = toDate("2018-04-01");
+        Date nextMonth = toDate("2018-05-01");
+        Date nextYear = toDate("2019-04-01");
+
+        Drug safeDrug = new Drug(1L, "Safe Drug");
+        DrugIngredient safeIngredient = new DrugIngredient(2L, "Safe Ingredient", nextYear);
+        safeDrug.add(safeIngredient);
+
+        Patient patient = new Patient(14L, "Clark Kent");
+
+        DrugIngredient kriptonite = new DrugIngredient(1L, "Kriptonite", nextMonth);
+        patient.add(allergyTo(kriptonite));
+
+        orderException = new OrderException(ORDER_EXCEPTION_MESSAGE);
+        cantDispenseBecause(ORDER_EXCEPTION_MESSAGE);
+
+        service.dispenseDrugToPatient(safeDrug, patient);
+    }
+
     private Date toDate(String aDate) {
         return LocalDate.parse(aDate).toDate();
     }
@@ -123,7 +146,9 @@ public class DispenseDrugServiceTest {
 
         @Override
         protected void createNewOrder(Drug drug, Patient patient) throws OrderException {
-            // Do nothing
+            if (orderException != null)
+                throw orderException;
+
             orderCreated = true;
         }
     }
