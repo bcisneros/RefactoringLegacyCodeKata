@@ -6,6 +6,7 @@ import org.devdelicias.model.Allergy;
 import org.devdelicias.model.Drug;
 import org.devdelicias.model.DrugIngredient;
 import org.devdelicias.model.Patient;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import org.joda.time.LocalDate;
 import org.junit.Rule;
@@ -24,6 +25,7 @@ public class DispenseDrugServiceTest {
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
     private Date currentDate;
+    private boolean orderCreated = false;
 
     @Test
     public void cantDispenseDrugIfThereAreNotIngredients() throws DispenseDrugException {
@@ -71,6 +73,30 @@ public class DispenseDrugServiceTest {
         service.dispenseDrugToPatient(antibiotic, patient);
     }
 
+    @Test
+    public void canDispenseDrugToPatientIfDrugIsSafe() throws DispenseDrugException {
+        currentDate = toDate("2018-04-01");
+        Date nextMonth = toDate("2018-05-01");
+        Date nextYear = toDate("2019-04-01");
+
+        Drug safeDrug = new Drug(1L, "Safe Drug");
+        DrugIngredient safeIngredient = new DrugIngredient(2L, "Safe Ingredient", nextYear);
+        safeDrug.add(safeIngredient);
+
+        Patient patient = new Patient(14L, "Clark Kent");
+
+        DrugIngredient kriptonite = new DrugIngredient(1L, "Kriptonite", nextMonth);
+        patient.add(allergyTo(kriptonite));
+
+        service.dispenseDrugToPatient(safeDrug, patient);
+
+        assertThat(
+            "Should create a new order",
+            orderCreated,
+            is(true)
+        );
+    }
+
     private Date toDate(String aDate) {
         return LocalDate.parse(aDate).toDate();
     }
@@ -93,6 +119,12 @@ public class DispenseDrugServiceTest {
         @Override
         protected Date currentDate() {
             return currentDate;
+        }
+
+        @Override
+        protected void createNewOrder(Drug drug, Patient patient) throws OrderException {
+            // Do nothing
+            orderCreated = true;
         }
     }
 }

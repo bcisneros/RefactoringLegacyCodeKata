@@ -79,7 +79,7 @@ public class DispenseDrugService {
             // Try to create new Order
             try {
                 logger.info("Trying to create new order.");
-                OrderService.createOrder(drug, patient);
+                createNewOrder(drug, patient);
                 logger.info("Order created.");
 
             } catch (OrderException e) {
@@ -91,6 +91,10 @@ public class DispenseDrugService {
                 "There are not ingredients for drug: " + drug.name()
             );
         }
+    }
+
+    protected void createNewOrder(Drug drug, Patient patient) throws OrderException {
+        OrderService.createOrder(drug, patient);
     }
 
     protected Date currentDate() {
