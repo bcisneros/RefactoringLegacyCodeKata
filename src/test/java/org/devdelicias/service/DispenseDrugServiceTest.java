@@ -45,16 +45,16 @@ public class DispenseDrugServiceTest {
     }
 
     @Test
-    public void cantDispenseDrugIfAnyIngredientIsExpired() throws DispenseDrugException {
+    @Parameters(method = "expiredIngredients")
+    public void cantDispenseDrugIfAnyIngredientIsExpired(String ingredientName, String reason) throws DispenseDrugException {
         currentDate = toDate("2018-05-10");
         Date yesterday = toDate("2018-05-09");
-        String ingredientName = "Vitamin A";
         Drug drug = new Drug(ANY_DRUG_ID, ANY_DRUG_NAME);
         DrugIngredient expiredIngredient = new DrugIngredient(
             ANY_INGREDIENT_ID, ingredientName, yesterday);
         drug.add(expiredIngredient);
 
-        cantDispenseBecause("Ingredient Vitamin A is expired.");
+        cantDispenseBecause(reason);
 
         service.dispenseDrugToPatient(drug, UNUSED_PATIENT);
     }
@@ -144,6 +144,15 @@ public class DispenseDrugServiceTest {
                 new String[] {"Lipitor", "There are not ingredients for drug: Lipitor"},
                 new String[] {"Xanax", "There are not ingredients for drug: Xanax"},
                 new String[] {"A Drug Name", "There are not ingredients for drug: A Drug Name"},
+        };
+    }
+
+    @SuppressWarnings("unused")
+    private String[][] expiredIngredients() {
+        return new String[][]{
+                new String[] {"Vitamin A", "Ingredient Vitamin A is expired."},
+                new String[] {"Vitamin B", "Ingredient Vitamin B is expired."},
+                new String[] {"Ingredient Name", "Ingredient Ingredient Name is expired."},
         };
     }
 
