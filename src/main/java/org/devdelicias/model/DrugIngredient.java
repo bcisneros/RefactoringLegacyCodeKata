@@ -47,4 +47,36 @@ public class DrugIngredient {
     public Date expirationDate() {
         return _expirationDate;
     }
+
+    public static final class DrugIngredientBuilder {
+        private Long _id;
+        private String _name;
+        private Date _expirationDate;
+
+        private DrugIngredientBuilder() {
+        }
+
+        public static DrugIngredientBuilder aDrugIngredient() {
+            return new DrugIngredientBuilder();
+        }
+
+        public DrugIngredientBuilder withId(Long _id) {
+            this._id = _id;
+            return this;
+        }
+
+        public DrugIngredientBuilder withName(String _name) {
+            this._name = _name;
+            return this;
+        }
+
+        public DrugIngredientBuilder withExpirationDate(Date _expirationDate) {
+            this._expirationDate = _expirationDate;
+            return this;
+        }
+
+        public DrugIngredient build() {
+            return new DrugIngredient(this._id, this._name, this._expirationDate);
+        }
+    }
 }

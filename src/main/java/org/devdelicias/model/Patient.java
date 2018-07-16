@@ -24,6 +24,7 @@
 package org.devdelicias.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -53,5 +54,43 @@ public class Patient {
 
     public void add(Allergy... allergies) {
         this._allergies.addAll(asList(allergies));
+    }
+
+    public void add(List<Allergy> allergies) {
+        this._allergies.addAll(allergies);
+    }
+
+    public static final class PatientBuilder {
+        private Long _id;
+        private String _name;
+        private List<Allergy> _allergies = new ArrayList<>();
+
+        private PatientBuilder() {
+        }
+
+        public static PatientBuilder aPatient() {
+            return new PatientBuilder();
+        }
+
+        public PatientBuilder withId(Long _id) {
+            this._id = _id;
+            return this;
+        }
+
+        public PatientBuilder withName(String _name) {
+            this._name = _name;
+            return this;
+        }
+
+        public PatientBuilder withAllergies(Allergy... _allergies) {
+            this._allergies = new ArrayList<>(Arrays.asList(_allergies));
+            return this;
+        }
+
+        public Patient build() {
+            Patient patient = new Patient(this._id, this._name);
+            patient.add(this._allergies);
+            return patient;
+        }
     }
 }

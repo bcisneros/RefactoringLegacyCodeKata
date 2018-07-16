@@ -70,7 +70,8 @@ public class DispenseDrugService {
                                 "Could not dispense drug " + drug.name()
                                     + " cause patient "
                                     + patient.name() + " has allergy to "
-                                    + ingredient.name());
+                                    + ingredient.name()
+                            );
                         }
                     }
                 }

@@ -51,7 +51,45 @@ public class Drug {
         this.ingredients.addAll(Arrays.asList(drugIngredients));
     }
 
+    public void add(List<DrugIngredient> drugIngredients) {
+        this.ingredients.addAll(drugIngredients);
+    }
+
     public List<DrugIngredient> ingredients() {
         return Collections.unmodifiableList(this.ingredients);
+    }
+
+    public static final class DrugBuilder {
+        private Long _id;
+        private String _name;
+        private List<DrugIngredient> ingredients = new ArrayList<>();
+
+        DrugBuilder() {
+        }
+
+        public static DrugBuilder aDrug() {
+            return new DrugBuilder();
+        }
+
+        public DrugBuilder withId(Long _id) {
+            this._id = _id;
+            return this;
+        }
+
+        public DrugBuilder withName(String _name) {
+            this._name = _name;
+            return this;
+        }
+
+        public DrugBuilder withIngredients(DrugIngredient ... ingredients) {
+            this.ingredients = new ArrayList<>(Arrays.asList(ingredients));
+            return this;
+        }
+
+        public Drug build() {
+            Drug drug = new Drug(this._id, this._name);
+            drug.add(this.ingredients);
+            return drug;
+        }
     }
 }
