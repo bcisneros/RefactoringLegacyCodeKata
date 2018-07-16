@@ -2,6 +2,9 @@ package org.devdelicias.service;
 
 import java.util.Date;
 import java.util.List;
+
+import junitparams.JUnitParamsRunner;
+import junitparams.Parameters;
 import org.devdelicias.model.Allergy;
 import org.devdelicias.model.Drug;
 import org.devdelicias.model.DrugIngredient;
@@ -12,14 +15,16 @@ import org.joda.time.LocalDate;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
 
+@RunWith(JUnitParamsRunner.class)
 public class DispenseDrugServiceTest {
 
     private static final long ANY_DRUG_ID = 6L;
     private static final String ANY_DRUG_NAME = "Any Drug Name";
     private static final long ANY_INGREDIENT_ID = 63L;
     private static final long ANY_PATIENT_ID = 56L;
-    public static final String ORDER_EXCEPTION_MESSAGE = "Order Service Failed";
+    private static final String ORDER_EXCEPTION_MESSAGE = "Order Service Failed";
     private DispenseDrugService service = new TestableDispenseDrugService();
     private static final Patient UNUSED_PATIENT = null;
 
@@ -30,11 +35,11 @@ public class DispenseDrugServiceTest {
     private OrderException orderException = null;
 
     @Test
-    public void cantDispenseDrugIfThereAreNotIngredients() throws DispenseDrugException {
-        String drugName = "Lipitor";
-        Drug drugWithoutIngredients = new Drug(ANY_DRUG_ID, drugName);
+	@Parameters(method = "drugsWithoutIngredients")
+    public void cantDispenseDrugIfThereAreNotIngredients(String drugName, String reason) throws DispenseDrugException {
+		Drug drugWithoutIngredients = new Drug(ANY_DRUG_ID, drugName);
 
-        cantDispenseBecause("There are not ingredients for drug: Lipitor");
+        cantDispenseBecause(reason);
 
         service.dispenseDrugToPatient(drugWithoutIngredients, UNUSED_PATIENT);
     }
@@ -133,7 +138,17 @@ public class DispenseDrugServiceTest {
         return new Allergy(ingredient.id());
     }
 
+    @SuppressWarnings("unused")
+    private String[][] drugsWithoutIngredients() {
+        return new String[][]{
+                new String[] {"Lipitor", "There are not ingredients for drug: Lipitor"},
+                new String[] {"Xanax", "There are not ingredients for drug: Xanax"},
+                new String[] {"A Drug Name", "There are not ingredients for drug: A Drug Name"},
+        };
+    }
+
     private class TestableDispenseDrugService extends DispenseDrugService {
+
         @Override
         protected List<DrugIngredient> ingredientsOf(Drug drug) {
             return drug.ingredients();
