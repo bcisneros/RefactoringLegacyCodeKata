@@ -59,6 +59,23 @@ public class Drug {
         return Collections.unmodifiableList(this.ingredients);
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("Drug{");
+        sb.append("\n");
+        sb.append("\t");
+        sb.append("id=").append(_id);
+        sb.append(",\n");
+        sb.append("\t");
+        sb.append("name='").append(_name).append('\'');
+        sb.append(",\n");
+        sb.append("\t");
+        sb.append("ingredients=").append(ingredients);
+        sb.append("\n");
+        sb.append('}');
+        return sb.toString();
+    }
+
     public static final class DrugBuilder {
         private Long _id;
         private String _name;

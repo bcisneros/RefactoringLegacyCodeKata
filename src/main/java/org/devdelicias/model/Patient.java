@@ -60,6 +60,16 @@ public class Patient {
         this._allergies.addAll(allergies);
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("Patient{");
+        sb.append("_id=").append(_id);
+        sb.append(", _name='").append(_name).append('\'');
+        sb.append(", _allergies=").append(_allergies);
+        sb.append('}');
+        return sb.toString();
+    }
+
     public static final class PatientBuilder {
         private Long _id;
         private String _name;

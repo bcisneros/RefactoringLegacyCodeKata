@@ -37,6 +37,9 @@ public class DispenseDrugServiceTest {
 	private Date currentDate;
 	private boolean orderCreated = false;
 	private OrderException orderException = null;
+	private int createOrderCallCounter = 0;
+	private Drug drugUsedToCreateOrder = null;
+	private Patient patientUsedToCreateOrder = null;
 
 	@Test
 	@Parameters(method = "drugsWithoutIngredients")
@@ -107,13 +110,12 @@ public class DispenseDrugServiceTest {
 		Date nextMonth = toDate("2018-05-01");
 		Date nextYear = toDate("2019-04-01");
 
-		Drug safeDrug = new Drug(1L, "Safe Drug");
 		DrugIngredient safeIngredient = new DrugIngredient(2L, "Safe Ingredient", nextYear);
+		Drug safeDrug = new Drug(1L, "Safe Drug");
 		safeDrug.add(safeIngredient);
 
-		Patient patient = new Patient(14L, "Clark Kent");
-
 		DrugIngredient kriptonite = new DrugIngredient(1L, "Kriptonite", nextMonth);
+		Patient patient = new Patient(14L, "Clark Kent");
 		patient.add(allergyTo(kriptonite));
 
 		service.dispenseDrugToPatient(safeDrug, patient);
@@ -122,6 +124,21 @@ public class DispenseDrugServiceTest {
 				"Should create a new order",
 				orderCreated,
 				is(true)
+		);
+		assertThat(
+				"Should create a new order",
+				createOrderCallCounter,
+				is(1)
+		);
+
+		assertThat(
+				drugUsedToCreateOrder,
+				is(safeDrug)
+		);
+
+		assertThat(
+				patientUsedToCreateOrder,
+				is(patient)
 		);
 	}
 
@@ -203,6 +220,9 @@ public class DispenseDrugServiceTest {
 				throw orderException;
 
 			orderCreated = true;
+			createOrderCallCounter++;
+			drugUsedToCreateOrder = drug;
+			patientUsedToCreateOrder = patient;
 		}
 	}
 }

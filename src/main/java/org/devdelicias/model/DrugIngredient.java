@@ -48,6 +48,16 @@ public class DrugIngredient {
         return _expirationDate;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("DrugIngredient{");
+        sb.append("id=").append(_id);
+        sb.append(", name='").append(_name).append('\'');
+        sb.append(", expirationDate=").append(_expirationDate);
+        sb.append('}');
+        return sb.toString();
+    }
+
     public static final class DrugIngredientBuilder {
         private Long _id;
         private String _name;
